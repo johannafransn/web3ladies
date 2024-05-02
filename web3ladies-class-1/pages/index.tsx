@@ -2,12 +2,21 @@ import React, { useState } from 'react'
 import Page from '@/components/page'
 import Section from '@/components/section'
 import Button from '@/components/button'
-import { useRouter } from 'next/navigation'
-import { SignInButton } from '@/components/SignInButton'
+
 import ApiService from '@/api/service'
+//Viem imports
+import { createWalletClient, http } from 'viem'
+import { sepolia } from 'viem/chains'
+import { mnemonicToAccount } from 'viem/accounts'
+
+//Ethers imports
+import { ethers } from 'ethers'
 
 const Index = () => {
 	const [dataFetched, setDataFetched] = useState<string | null>(null)
+	const [viemWalletClient, setViemWalletClient] = useState<any | null>(null)
+	const [ethersWallet, setEthersWallet] = useState<any | null>(null)
+
 	const [error, setError] = useState<string | null>(null)
 
 	const handleReadData = async () => {
@@ -21,11 +30,25 @@ const Index = () => {
 	}
 	const handleInstantiateWallet = async () => {
 		try {
-			const data = await ApiService.getAuthenticatedData()
-			setDataFetched(data.data)
-			setError(null)
+			//Instantiating the wallet using Viem
+			const account = mnemonicToAccount(
+				process.env.NEXT_PUBLIC_SEED_PHRASE ?? '',
+			)
+			const walletClient = createWalletClient({
+				account,
+				chain: sepolia,
+				transport: http(process.env.NEXT_PUBLIC_RPC_URL!),
+			})
+			setViemWalletClient(walletClient)
+
+			//Instantiating Wallet using Ethers
+			const ethersWallet = ethers.Wallet.fromPhrase(
+				process.env.NEXT_PUBLIC_SEED_PHRASE ?? '',
+			)
+			setEthersWallet(ethersWallet)
 		} catch (err) {
-			setError('Error occurred fetching')
+			console.log(err, 'error instantiating wallet')
+			setError('error instantiating wallet')
 		}
 	}
 	const handleWriteData = async () => {
