@@ -155,3 +155,17 @@ export const WETH_ABI = [
         type: "event",
     },
 ];
+
+export const shortenEthAddress = (address: any) => {
+    // Check if the address has the correct format
+    if (!/^0x[a-fA-F0-9]{40}$/.test(address)) {
+        return "Invalid Ethereum address";
+    }
+
+    const firstPart = address.slice(0, 4);
+    const lastPart = address.slice(-4);
+
+    const shortenedAddress = `${firstPart}...${lastPart}`;
+
+    return shortenedAddress;
+}
