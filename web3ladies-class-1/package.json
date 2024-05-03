@@ -4,12 +4,13 @@
 	"description": "NexJS PWA using TypeScript, TailwindCSS & Viem.",
 	"author": "https://github.com/johannafransn",
 	"scripts": {
-		"dev": "next dev",
+		"dev": "node -r dotenv/config ./node_modules/.bin/next dev",
 		"build": "next build",
 		"start": "next start",
 		"lint": "next lint"
 	},
 	"dependencies": {
+		"dotenv": "^16.4.5",
 		"ethers": "^6.12.1",
 		"next": "13.5.4",
 		"next-pwa": "^5.6.0",
